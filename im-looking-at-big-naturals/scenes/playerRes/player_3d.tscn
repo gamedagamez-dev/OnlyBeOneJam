@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bop3p11s2e8hk"]
 
-[ext_resource type="Script" uid="uid://ct5eymwefbrb3" path="res://player3d.cs" id="1_52vux"]
+[ext_resource type="Script" uid="uid://ct5eymwefbrb3" path="res://scenes/playerRes/player3d.cs" id="1_52vux"]
+[ext_resource type="PackedScene" uid="uid://b0u0yy2x1mu6x" path="res://scenes/playerRes/playerUi.tscn" id="2_gielv"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_52vux"]
 
@@ -8,6 +9,8 @@
 
 [node name="Player3d" type="CharacterBody3D" unique_id=552597078]
 script = ExtResource("1_52vux")
+
+[node name="PlayerUi" parent="." unique_id=66220140 instance=ExtResource("2_gielv")]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1966906301]
 mesh = SubResource("CapsuleMesh_52vux")

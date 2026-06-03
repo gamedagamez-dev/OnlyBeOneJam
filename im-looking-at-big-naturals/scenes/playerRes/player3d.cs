@@ -7,9 +7,10 @@ public partial class player3d : CharacterBody3D
 	public const float RunSpeed = 10f;
 	private const float groundAccel = 40f;
 	private const float airAccel = 10f;
-	public const float JumpVelocity = 4.5f;
+	private const float JumpVelocity = 4.5f;
 	public const float MouseSensitivity = 0.003f;
-	public const float MaxPitchAngle = 85.0f;
+	private const float MaxPitchAngle = 85.0f;
+	private const float MaxRollAngle = 120.0f;
 	private const float Friction = 35.0f;
 	private const float FreelookReturnSpeed = 16.0f;
 	private Marker3D _twistPivot;
@@ -93,10 +94,19 @@ public partial class player3d : CharacterBody3D
 			{
 				// 1a. Rotate the character neck pivot left and right (Y axis)
             	_twistPivot.RotateY(-mouseMotion.Relative.X * MouseSensitivity);
+
+				// 1b. Clamp the horizontal looking angle to prevent looking directly behind the player
+				Vector3 currentRotationHor = _twistPivot.Rotation;
+           		currentRotationHor.Y = Mathf.Clamp(
+            		currentRotationHor.Y, 
+                	Mathf.DegToRad(-MaxRollAngle), 
+                	Mathf.DegToRad(MaxRollAngle)
+				);
+				_twistPivot.Rotation = currentRotationHor; 
 			}
 			else
 			{
-				// 1b. Rotate the character body pivot left and right (Y axis)
+				// 1A. Rotate the character body pivot left and right (Y axis)
 				RotateY(-mouseMotion.Relative.X * MouseSensitivity);
 			}
             // 2. Rotate the camera pitch up and down (X axis)

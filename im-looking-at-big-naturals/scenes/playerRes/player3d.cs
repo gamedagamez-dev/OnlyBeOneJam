@@ -14,7 +14,7 @@ public partial class player3d : CharacterBody3D
 	private const float Friction = 35.0f;
 	private const float FreelookReturnSpeed = 16.0f;
 	private Marker3D _twistPivot;
-    private Camera3D _pitchPivot;
+    private Marker3D _pitchPivot;
 	private bool _running = false;
 	private bool _crouching = false;
 	private bool _freelook = false;
@@ -23,8 +23,8 @@ public partial class player3d : CharacterBody3D
 	public override void _Ready()
     {
         // Get references to our structural nodes
-        _twistPivot = GetNode<Marker3D>("Marker3D");
-        _pitchPivot = GetNode<Camera3D>("Marker3D/Camera3D");
+        _twistPivot = GetNode<Marker3D>("CamPivot");
+        _pitchPivot = GetNode<Marker3D>("CamPivot/NeckPivot");
 
         // Lock and hide the cursor inside the window bounds
         Input.MouseMode = Input.MouseModeEnum.Captured;

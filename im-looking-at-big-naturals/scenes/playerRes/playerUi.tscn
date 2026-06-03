@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://b0u0yy2x1mu6x"]
+
+[ext_resource type="Script" uid="uid://cew5282m3ytyr" path="res://scenes/playerRes/PlayerUi.cs" id="1_0agfx"]
+
+[node name="PlayerUi" type="Control" unique_id=66220140]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0agfx")
+
+[node name="Label" type="Label" parent="." unique_id=1601061735]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Velocity:"
+
+[node name="VelBox" type="Label" parent="." unique_id=1113427345]
+layout_mode = 0
+offset_left = 66.0
+offset_right = 132.0
+offset_bottom = 23.0

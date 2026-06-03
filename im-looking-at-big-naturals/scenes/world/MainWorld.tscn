@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://cuwe1pq355ay8"]
+
+[ext_resource type="PackedScene" uid="uid://bop3p11s2e8hk" path="res://scenes/playerRes/player_3d.tscn" id="1_sw8ej"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sw8ej"]
+frequency = 0.142
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4vlj2"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_sw8ej")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lb6jv"]
+albedo_color = Color(0, 0.6537113, 0.14062765, 1)
+albedo_texture = SubResource("NoiseTexture2D_4vlj2")
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_m1c1d"]
+sky_top_color = Color(0.07653288, 0.5072083, 0.63984853, 1)
+
+[sub_resource type="Sky" id="Sky_yawxq"]
+sky_material = SubResource("ProceduralSkyMaterial_m1c1d")
+
+[sub_resource type="Environment" id="Environment_sw8ej"]
+background_mode = 2
+sky = SubResource("Sky_yawxq")
+
+[node name="MainWorld" type="Node3D" unique_id=97623713]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1849595001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4995, 0)
+use_collision = true
+size = Vector3(100, 0.001, 100)
+material = SubResource("StandardMaterial3D_lb6jv")
+
+[node name="Player3d" parent="." unique_id=552597078 instance=ExtResource("1_sw8ej")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3364139, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=968395800]
+environment = SubResource("Environment_sw8ej")

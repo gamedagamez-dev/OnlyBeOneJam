@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://bop3p11s2e8hk"]
 
 [ext_resource type="Script" uid="uid://ct5eymwefbrb3" path="res://player3d.cs" id="1_52vux"]
-[ext_resource type="PackedScene" uid="uid://b0u0yy2x1mu6x" path="res://scenes/playerRes/playerUi.tscn" id="2_gielv"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_52vux"]
 
@@ -20,5 +19,3 @@ shape = SubResource("CapsuleShape3D_52vux")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.61081433, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Marker3D" unique_id=1673125798]
-
-[node name="PlayerUi" parent="." unique_id=66220140 instance=ExtResource("2_gielv")]

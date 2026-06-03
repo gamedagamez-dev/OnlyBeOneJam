@@ -8,8 +8,28 @@ albedo_color = Color(0, 0.6537113, 0.14062765, 1)
 albedo_texture = ExtResource("1_4vlj2")
 uv1_scale = Vector3(50, 50, 50)
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4vlj2"]
+load_path = "res://.godot/imported/MissingTex.png-531746d7426f37a301e1e9c1051e0341.s3tc.ctex"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m1c1d"]
+albedo_color = Color(0, 0.6537113, 0.14062765, 1)
+albedo_texture = SubResource("CompressedTexture2D_4vlj2")
+uv1_scale = Vector3(25, 25, 25)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_yawxq"]
+load_path = "res://.godot/imported/MissingTex.png-531746d7426f37a301e1e9c1051e0341.s3tc.ctex"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w26i4"]
+albedo_color = Color(0, 0.6537113, 0.14062765, 1)
+albedo_texture = SubResource("CompressedTexture2D_yawxq")
+uv1_scale = Vector3(2.5, 2.5, 2.5)
+uv1_offset = Vector3(0.5, 0, 0)
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_m1c1d"]
 sky_top_color = Color(0.07653288, 0.5072083, 0.63984853, 1)
+sky_horizon_color = Color(0.70537287, 0.69313353, 0.94964427, 1)
+sun_angle_max = 15.0
+use_debanding = false
 
 [sub_resource type="Sky" id="Sky_yawxq"]
 sky_material = SubResource("ProceduralSkyMaterial_m1c1d")
@@ -26,8 +46,26 @@ use_collision = true
 size = Vector3(100, 0.001, 100)
 material = SubResource("StandardMaterial3D_lb6jv")
 
+[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=1710018423]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 24.5, 0)
+use_collision = true
+size = Vector3(0.1, 50, 50)
+material = SubResource("StandardMaterial3D_m1c1d")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="." unique_id=59129803]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 2, 4.5)
+use_collision = true
+size = Vector3(5, 5, 5)
+material = SubResource("StandardMaterial3D_w26i4")
+
 [node name="Player3d" parent="." unique_id=552597078 instance=ExtResource("1_sw8ej")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3364139, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=968395800]
 environment = SubResource("Environment_sw8ej")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=842492895]
+transform = Transform3D(0.6439812, -0.67966694, 0.3511995, 0.29204154, 0.64269185, 0.7082789, -0.7071068, -0.35355338, 0.61237246, 0, 1.5479429, 0)
+light_cull_mask = 4294967293
+shadow_enabled = true
+sky_mode = 1

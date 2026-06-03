@@ -78,50 +78,54 @@ mesh = SubResource("BoxMesh_gielv")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21247387, -0.21628709)
 
 [node name="SlotVisual" type="MeshInstance3D" parent="ChestSlot" unique_id=2071707127]
+layers = 2
 mesh = SubResource("BoxMesh_8448c")
 
-[node name="Area3D" type="Area3D" parent="ChestSlot" unique_id=715880037 groups=["PlayerSlot"]]
+[node name="SlotSelect1" type="Area3D" parent="ChestSlot" unique_id=715880037 groups=["PlayerSlot"]]
 collision_layer = 32768
 collision_mask = 32768
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ChestSlot/Area3D" unique_id=667359634]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChestSlot/SlotSelect1" unique_id=667359634]
 shape = SubResource("BoxShape3D_gielv")
 
 [node name="BeltSlot1" type="Marker3D" parent="." unique_id=1121966867]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3887012, 0, -0.0839054)
 
 [node name="SlotVisual" type="MeshInstance3D" parent="BeltSlot1" unique_id=1386861802]
+layers = 2
 mesh = SubResource("SphereMesh_gielv")
 
-[node name="Area3D" type="Area3D" parent="BeltSlot1" unique_id=1696237258 groups=["PlayerSlot"]]
+[node name="SlotSelect2" type="Area3D" parent="BeltSlot1" unique_id=1696237258 groups=["PlayerSlot"]]
 collision_layer = 32768
 collision_mask = 32768
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BeltSlot1/Area3D" unique_id=448386650]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BeltSlot1/SlotSelect2" unique_id=448386650]
 shape = SubResource("SphereShape3D_8448c")
 
 [node name="BeltSlot2" type="Marker3D" parent="." unique_id=690048966]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2996105, 0, -0.205296)
 
 [node name="SlotVisual" type="MeshInstance3D" parent="BeltSlot2" unique_id=529385991]
+layers = 2
 mesh = SubResource("SphereMesh_gielv")
 
-[node name="Area3D" type="Area3D" parent="BeltSlot2" unique_id=2082744689 groups=["PlayerSlot"]]
+[node name="SlotSelect3" type="Area3D" parent="BeltSlot2" unique_id=2082744689 groups=["PlayerSlot"]]
 collision_layer = 32768
 collision_mask = 32768
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BeltSlot2/Area3D" unique_id=494784306]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BeltSlot2/SlotSelect3" unique_id=494784306]
 shape = SubResource("SphereShape3D_8448c")
 
 [node name="BeltSlot3" type="Marker3D" parent="." unique_id=534972174]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17432977, 0, -0.29132095)
 
 [node name="SlotVisual" type="MeshInstance3D" parent="BeltSlot3" unique_id=2099833265]
+layers = 2
 mesh = SubResource("SphereMesh_gielv")
 
-[node name="Area3D" type="Area3D" parent="BeltSlot3" unique_id=334425223 groups=["PlayerSlot"]]
+[node name="SlotSelect4" type="Area3D" parent="BeltSlot3" unique_id=334425223 groups=["PlayerSlot"]]
 collision_layer = 32768
 collision_mask = 32768
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BeltSlot3/Area3D" unique_id=581629068]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BeltSlot3/SlotSelect4" unique_id=581629068]
 shape = SubResource("SphereShape3D_8448c")

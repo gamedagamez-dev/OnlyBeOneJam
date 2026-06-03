@@ -1,8 +1,14 @@
 [gd_scene format=3 uid="uid://b0u0yy2x1mu6x"]
 
 [ext_resource type="Script" uid="uid://cew5282m3ytyr" path="res://scenes/playerRes/PlayerUi.cs" id="1_0agfx"]
+[ext_resource type="Texture2D" uid="uid://bo3j16e052s4f" path="res://assets/ui/Crosshair1.png" id="2_42waw"]
+[ext_resource type="Shader" uid="uid://jc7501srcyry" path="res://scenes/playerRes/Crosshair.gdshader" id="2_odpwc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_odpwc"]
+shader = ExtResource("2_odpwc")
 
 [node name="PlayerUi" type="Control" unique_id=66220140]
+texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -16,10 +22,18 @@ script = ExtResource("1_0agfx")
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
+scale = Vector2(1.5, 1.5)
 text = "Velocity:"
 
 [node name="VelBox" type="Label" parent="." unique_id=1113427345]
 layout_mode = 0
-offset_left = 66.0
-offset_right = 132.0
+offset_left = 99.0
+offset_right = 165.0
 offset_bottom = 23.0
+scale = Vector2(1.5, 1.504)
+
+[node name="Crosshair1" type="Sprite2D" parent="." unique_id=950365260]
+material = SubResource("ShaderMaterial_odpwc")
+position = Vector2(576, 324)
+scale = Vector2(2, 2)
+texture = ExtResource("2_42waw")

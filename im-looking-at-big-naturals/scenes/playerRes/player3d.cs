@@ -3,28 +3,34 @@ using System;
 
 public partial class player3d : CharacterBody3D
 {
-	public const float Speed = 5.0f;
-	public const float RunSpeed = 10f;
+	public const float Speed = 8.0f;
+	public const float RunSpeed = 7.0f;
 	private const float groundAccel = 40f;
-	private const float airAccel = 10f;
+	private const float AirWishSpeed = 0.6f; // Small cap on "desired" air speed — keeping this well below
+	private const float AirAccelerate = 150f; // what creates strafe arc angle
 	private const float JumpVelocity = 4.5f;
 	public const float MouseSensitivity = 0.003f;
 	private const float MaxPitchAngle = 85.0f;
 	private const float MaxRollAngle = 120.0f;
 	private const float Friction = 35.0f;
 	private const float FreelookReturnSpeed = 16.0f;
+	private const float JumpBufferTime = 0.1f; // How long (seconds) a jump press is remembered before the player lands.
 	private Marker3D _twistPivot;
     private Marker3D _pitchPivot;
+	private RayCast3D _camPicker;
 	private bool _running = false;
 	private bool _crouching = false;
 	private bool _freelook = false;
 	private bool _unfree = false;
+	private bool _jumpBuffered = false;
+	private float _jumpBufferTimer = 0f;
 
 	public override void _Ready()
     {
         // Get references to our structural nodes
         _twistPivot = GetNode<Marker3D>("CamPivot");
         _pitchPivot = GetNode<Marker3D>("CamPivot/NeckPivot");
+		_camPicker = GetNode<RayCast3D>("CamPivot/NeckPivot/RayCast3D");
 
         // Lock and hide the cursor inside the window bounds
         Input.MouseMode = Input.MouseModeEnum.Captured;
@@ -39,16 +45,26 @@ public partial class player3d : CharacterBody3D
 			velocity += GetGravity() * (float)delta;
 		}
 
-		// Handle Jump.
-		if (Input.IsActionJustPressed("jump") && IsOnFloor())
+		// Tick down the jump buffer. The press itself is recorded in _UnhandledInput so we never miss it between physics ticks.
+		_jumpBufferTimer = Mathf.Max(0f, _jumpBufferTimer - (float)delta);
+		if (_jumpBufferTimer <= 0f) _jumpBuffered = false;
+
+		// Handle Jump. `jumped` gates friction below — if we leave the ground this frame, ground friction must not run or it will kill player horizontal momentum.
+		bool jumped = false;
+		if (_jumpBuffered && IsOnFloor())
 		{
 			velocity.Y = JumpVelocity;
+			jumped = true;
+			_jumpBuffered = false;
+			_jumpBufferTimer = 0f;
 		}
 
 		// Get the input direction and handle the movement/deceleration.
 		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_backward");
 		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
-		if (IsOnFloor())
+		// Skip the entire ground block when we just jumped. we're leaving the floor
+		// this frame, so applying friction would kill the horizontal momentum we need.
+		if (IsOnFloor() && !jumped)
         {
             if (direction != Vector3.Zero)
             {
@@ -63,13 +79,12 @@ public partial class player3d : CharacterBody3D
         }
         else
         {
-            // Air momentum: Maintain current XZ velocity, but allow slight steering if input is held
+            // Holding a strafe key while turning the mouse steers the arc and
+            // allows gradual speed gain. this is the intended mechanic.
             if (direction != Vector3.Zero)
             {
-                velocity.X = Mathf.MoveToward(velocity.X, direction.X * (Speed + (RunSpeed * Convert.ToInt32(_running))), airAccel * (float)delta);
-                velocity.Z = Mathf.MoveToward(velocity.Z, direction.Z * (Speed + (RunSpeed * Convert.ToInt32(_running))), airAccel * (float)delta);
+                AirStrafe(ref velocity, direction, AirWishSpeed, AirAccelerate, (float)delta);
             }
-            // If no input is given in the air, X and Z are untouched to preserve momentum
         }
 		
 
@@ -127,10 +142,20 @@ public partial class player3d : CharacterBody3D
 		// handle sprint action being unheld 
 		if (@event.IsActionReleased("sprint")){_running = false;}
 
+		// Buffer the jump press so _PhysicsProcess can't miss it between ticks.
+		if (@event.IsActionPressed("jump"))
+		{
+			_jumpBuffered = true;
+			_jumpBufferTimer = JumpBufferTime;
+		}
+
 		// handle freelook action being held
 		if (@event.IsActionPressed("free_look")){_freelook = true;}
 		// handle freelook action being unheld
 		if (@event.IsActionReleased("free_look")){_freelook = false;}
+
+		// handle left hand interact action
+		if (@event.IsActionPressed("left_hand_grab")){GetPickerSlot();}
 
         // toggles mouse capture off and on when pressing the Escape key
 		if (@event.IsActionPressed("ui_cancel"))
@@ -145,4 +170,53 @@ public partial class player3d : CharacterBody3D
 			}
 		}
     }
+
+	/// <summary>
+    /// Air accelerate formula.
+	/// 
+	/// When wishDir is roughly perpendicular to current velocity (i.e. strafing
+	/// sideways while turning), currentSpeed ≈ 0, so addSpeed ≈ wishSpeed and
+	/// we push the full accelSpeed — this is what lets the player curve and build
+	/// speed through coordinated mouse + key movement.
+    /// </summary>
+    /// <param name="currentSpeed">
+    /// how fast we're already moving in the wish direction
+    /// </param>
+	/// <param name="addSpeed">
+    /// how much headroom is left before we'd exceed wishSpeed
+    /// </param>
+	/// <param name="accelSpeed">
+    /// how fast we're already moving in the wish direction
+    /// </param>
+	/// <remarks>
+	/// 
+	/// </remarks
+	private static void AirStrafe(ref Vector3 velocity, Vector3 wishDir, float wishSpeed, float accel, float delta)
+	{
+		float currentSpeed = new Vector3(velocity.X, 0f, velocity.Z).Dot(wishDir);
+		float addSpeed = wishSpeed - currentSpeed;
+
+		if (addSpeed <= 0f) return;
+
+		float accelSpeed = Mathf.Min(accel * wishSpeed * delta, addSpeed);
+
+		velocity.X += accelSpeed * wishDir.X;
+		velocity.Z += accelSpeed * wishDir.Z;
+	}
+
+	private void GetPickerSlot(){
+		_camPicker.Enabled = true;
+		if(_camPicker.IsColliding())
+		{
+			Area3D tempArea = (Area3D)_camPicker.GetCollider();
+			if(tempArea.IsInGroup("PlayerSlot"))
+			{
+				GD.Print("Collided with slot");
+			}
+			else
+			{
+				GD.Print("Collided with nothing");
+			}
+		}
+	}
 }

@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://ct33ey6qxigbc"]
+
+[ext_resource type="Texture2D" uid="uid://f8isfg27lekp" path="res://assets/player/Utility/SpearGenTex.png" id="1_o2vus"]
+
+[resource]
+resource_name = "SpearGenTex.png"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_o2vus")
+texture_filter = 0

@@ -176,7 +176,7 @@ public partial class player3d : CharacterBody3D
 	/// 
 	/// When wishDir is roughly perpendicular to current velocity (i.e. strafing
 	/// sideways while turning), currentSpeed ≈ 0, so addSpeed ≈ wishSpeed and
-	/// we push the full accelSpeed — this is what lets the player curve and build
+	/// we push the full accelSpeed. this is what lets the player curve and build
 	/// speed through coordinated mouse + key movement.
     /// </summary>
     /// <param name="currentSpeed">

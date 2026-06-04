@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ct5eymwefbrb3" path="res://scenes/playerRes/player3d.cs" id="1_52vux"]
 [ext_resource type="PackedScene" uid="uid://b0u0yy2x1mu6x" path="res://scenes/playerRes/playerUi.tscn" id="2_gielv"]
+[ext_resource type="PackedScene" uid="uid://b8l1ae25m2fu6" path="res://assets/player/Utility/JumpSpear.fbx" id="3_8448c"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_52vux"]
 
@@ -104,6 +105,9 @@ shape = SubResource("SphereShape3D_8448c")
 
 [node name="BeltSlot2" type="Marker3D" parent="." unique_id=690048966]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2996105, 0, -0.205296)
+
+[node name="JumpSpear" parent="BeltSlot2" unique_id=590310488 instance=ExtResource("3_8448c")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.43804887, 0)
 
 [node name="SlotVisual" type="MeshInstance3D" parent="BeltSlot2" unique_id=529385991]
 layers = 2

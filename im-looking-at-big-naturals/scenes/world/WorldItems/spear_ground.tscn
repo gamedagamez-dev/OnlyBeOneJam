@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://b8p2s4l51j6wr"]
+
+[ext_resource type="Script" uid="uid://c8fruhgg6evgx" path="res://SpearGround.cs" id="1_kftgc"]
+[ext_resource type="PackedScene" uid="uid://b8l1ae25m2fu6" path="res://assets/player/Utility/JumpSpear.fbx" id="2_40w3g"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_xtumr"]
+radius = 0.2
+
+[node name="SpearGround" type="Area3D" unique_id=125347319]
+collision_layer = 32768
+collision_mask = 32768
+script = ExtResource("1_kftgc")
+ItemName = "SpearJump"
+
+[node name="JumpSpear" parent="." unique_id=590310488 instance=ExtResource("2_40w3g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=570966532]
+shape = SubResource("CylinderShape3D_xtumr")

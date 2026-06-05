@@ -44,6 +44,10 @@ public partial class player3d : CharacterBody3D
 	private Vector3 _camRotSpringVel = Vector3.Zero;
 	private bool _wasOnFloor = false;
 	private Vector3 _prevVelocity = Vector3.Zero;
+	// Hand system
+	private PlayerHand _leftHand;
+	private PlayerHand _rightHand;
+	private BodySlot _lastTargetedSlot; // tracks which body slot is currently highlighted
 
 	public override void _Ready()
     {
@@ -56,6 +60,10 @@ public partial class player3d : CharacterBody3D
 		// not destructive — the scene's existing tilt/position is preserved.
 		_camRestPos = _camera.Position;
 		_camRestRot = _camera.Rotation;
+		// Hand references — expects LeftHand and RightHand child nodes on this node.
+		_leftHand  = GetNode<PlayerHand>("CamPivot/NeckPivot/Camera3D/HandPosL/Hand");
+		_rightHand = GetNode<PlayerHand>("CamPivot/NeckPivot/Camera3D/HandPosR/Hand");
+		_camPicker.Enabled = true; // keep hot every frame for grab detection and slot highlighting
 
         // Lock and hide the cursor inside the window bounds
         Input.MouseMode = Input.MouseModeEnum.Captured;
@@ -128,6 +136,10 @@ public partial class player3d : CharacterBody3D
 		UpdateCameraInertia((float)delta, jumped, justLanded);
 		_prevVelocity = Velocity; // save post-slide velocity; used next frame as impact-speed proxy
 		_wasOnFloor = IsOnFloor();
+		// Drive hand callbacks and refresh the body-slot highlight.
+		_leftHand.Tick((float)delta);
+		_rightHand.Tick((float)delta);
+		UpdateSlotTargeting();
 	}
 
 	public override void _UnhandledInput(InputEvent @event)
@@ -185,8 +197,14 @@ public partial class player3d : CharacterBody3D
 		// handle freelook action being unheld
 		if (@event.IsActionReleased("free_look")){_freelook = false;}
 
-		// handle left hand interact action
-		if (@event.IsActionPressed("left_hand_grab")){GetPickerSlot();}
+		// Grab and drop — routed through the hand state machines.
+		// GetCurrentGrabbable() calls ForceRaycastUpdate() for a fresh result at the moment of the press.
+		if (@event.IsActionPressed("left_hand_grab"))   { _leftHand.OnGrabPressed(GetCurrentGrabbable()); }
+		if (@event.IsActionReleased("left_hand_grab"))  { _leftHand.OnGrabReleased(); }
+		if (@event.IsActionPressed("right_hand_grab"))  { _rightHand.OnGrabPressed(GetCurrentGrabbable()); }
+		if (@event.IsActionReleased("right_hand_grab")) { _rightHand.OnGrabReleased(); }
+		if (@event.IsActionPressed("left_hand_drop"))   { _leftHand.Drop(); }
+		if (@event.IsActionPressed("right_hand_drop"))  { _rightHand.Drop(); }
 
         // toggles mouse capture off and on when pressing the Escape key
 		if (@event.IsActionPressed("ui_cancel"))
@@ -295,19 +313,44 @@ public partial class player3d : CharacterBody3D
 		_camera.Rotation = _camRestRot + new Vector3(_camRotOffset.X, 0f, _camRotOffset.Z);
 	}
 
-	private void GetPickerSlot(){
-		_camPicker.Enabled = true;
-		if(_camPicker.IsColliding())
+	/// <summary>
+	/// Reads the camera raycast to find the nearest GrabbableBase or BodySlot item.
+	/// Called on demand from input events. ForceRaycastUpdate() guarantees the result
+	/// is fresh at the exact moment the button was pressed, not from the last physics tick.
+	/// Returns null if nothing grabbable is in range or in the crosshair.
+	/// </summary>
+	private GrabbableBase GetCurrentGrabbable()
+	{
+		_camPicker.ForceRaycastUpdate();
+		if (!_camPicker.IsColliding()) return null;
+
+		GodotObject collider = _camPicker.GetCollider();
+
+		// Direct hit on a world-placed grabbable (loose items, climbing holds, etc.)
+		if (collider is GrabbableBase grabbable) return grabbable;
+
+		// Hit a body slot — hand over the item it contains, not the slot node itself.
+		if (collider is BodySlot slot && slot.HasItem) return slot.HeldItem;
+
+		return null;
+	}
+
+	/// <summary>
+	/// Runs every physics frame. Tracks which BodySlot is currently under the crosshair
+	/// and calls SetTargeted() so slots can show or hide their highlight indicator.
+	/// Uses the physics-updated raycast result — no ForceRaycastUpdate() needed here.
+	/// </summary>
+	private void UpdateSlotTargeting()
+	{
+		BodySlot current = null;
+		if (_camPicker.IsColliding() && _camPicker.GetCollider() is BodySlot slot)
+			current = slot;
+
+		if (current != _lastTargetedSlot)
 		{
-			Area3D tempArea = (Area3D)_camPicker.GetCollider();
-			if(tempArea.IsInGroup("PlayerSlot"))
-			{
-				GD.Print("Collided with slot");
-			}
-			else
-			{
-				GD.Print("Collided with nothing");
-			}
+			_lastTargetedSlot?.SetTargeted(false);
+			current?.SetTargeted(true);
+			_lastTargetedSlot = current;
 		}
 	}
 }

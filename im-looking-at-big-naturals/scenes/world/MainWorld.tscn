@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dcy11i3ndxfrg" path="res://assets/resources/MissingTex.png" id="1_4vlj2"]
 [ext_resource type="PackedScene" uid="uid://bop3p11s2e8hk" path="res://scenes/playerRes/player_3d.tscn" id="1_sw8ej"]
+[ext_resource type="PackedScene" uid="uid://b8p2s4l51j6wr" path="res://scenes/world/WorldItems/spear_ground.tscn" id="3_lb6jv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lb6jv"]
 albedo_color = Color(0, 0.6537113, 0.14062765, 1)
@@ -69,3 +70,6 @@ transform = Transform3D(0.6439812, -0.67966694, 0.3511995, 0.29204154, 0.6426918
 light_cull_mask = 4294967293
 shadow_enabled = true
 sky_mode = 1
+
+[node name="SpearGround" parent="." unique_id=125347319 instance=ExtResource("3_lb6jv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0562747, 6.737808)

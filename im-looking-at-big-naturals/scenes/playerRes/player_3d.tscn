@@ -2,34 +2,14 @@
 
 [ext_resource type="Script" uid="uid://ct5eymwefbrb3" path="res://scenes/playerRes/player3d.cs" id="1_52vux"]
 [ext_resource type="PackedScene" uid="uid://b0u0yy2x1mu6x" path="res://scenes/playerRes/playerUi.tscn" id="2_gielv"]
-[ext_resource type="PackedScene" uid="uid://b8l1ae25m2fu6" path="res://assets/player/Utility/JumpSpear.fbx" id="3_8448c"]
-[ext_resource type="Texture2D" uid="uid://der6pfggxhar1" path="res://assets/player/hand.png" id="3_n67ek"]
+[ext_resource type="PackedScene" uid="uid://dh7blpg8uxo3b" path="res://scenes/playerRes/hand.tscn" id="3_n67ek"]
+[ext_resource type="PackedScene" uid="uid://bagdrjb6wxoxc" path="res://scenes/playerRes/wideslot.tscn" id="4_54wtk"]
+[ext_resource type="PackedScene" uid="uid://btcpejlwhw0ys" path="res://scenes/playerRes/beltslot.tscn" id="5_qcx1q"]
+[ext_resource type="PackedScene" uid="uid://b8p2s4l51j6wr" path="res://scenes/world/WorldItems/spear_ground.tscn" id="6_qcx1q"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_52vux"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_52vux"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gielv"]
-transparency = 1
-albedo_color = Color(0.40392157, 0.05490196, 0, 0.7019608)
-emission_enabled = true
-emission = Color(1, 0, 0, 1)
-emission_energy_multiplier = 0.05
-
-[sub_resource type="BoxMesh" id="BoxMesh_8448c"]
-material = SubResource("StandardMaterial3D_gielv")
-size = Vector3(0.2, 0.1, 0.05)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_gielv"]
-size = Vector3(0.2, 0.1, 0.05)
-
-[sub_resource type="SphereMesh" id="SphereMesh_gielv"]
-material = SubResource("StandardMaterial3D_gielv")
-radius = 0.05
-height = 0.1
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_8448c"]
-radius = 0.05
 
 [node name="Player3d" type="CharacterBody3D" unique_id=552597078]
 script = ExtResource("1_52vux")
@@ -56,17 +36,16 @@ fov = 90.0
 [node name="HandPosL" type="Marker3D" parent="CamPivot/NeckPivot/Camera3D" unique_id=809702355]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, -0.209, -0.0668143, -0.18168798)
 
-[node name="Hand" type="Sprite3D" parent="CamPivot/NeckPivot/Camera3D/HandPosL" unique_id=482225701]
-flip_h = true
-pixel_size = 0.001
-texture = ExtResource("3_n67ek")
+[node name="Hand" parent="CamPivot/NeckPivot/Camera3D/HandPosL" unique_id=988303314 instance=ExtResource("3_n67ek")]
 
 [node name="HandPosR" type="Marker3D" parent="CamPivot/NeckPivot/Camera3D" unique_id=391597121]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0.209, -0.0668143, -0.18168798)
 
-[node name="Hand" type="Sprite3D" parent="CamPivot/NeckPivot/Camera3D/HandPosR" unique_id=45288600]
-pixel_size = 0.001
-texture = ExtResource("3_n67ek")
+[node name="Hand" parent="CamPivot/NeckPivot/Camera3D/HandPosR" unique_id=693343663 instance=ExtResource("3_n67ek")]
+Side = 1
+
+[node name="Hand" parent="CamPivot/NeckPivot/Camera3D/HandPosR/Hand" index="0" unique_id=1031034887]
+flip_h = false
 
 [node name="RayCast3D" type="RayCast3D" parent="CamPivot/NeckPivot" unique_id=1745168951]
 transform = Transform3D(1, 0, 0, 0, 0.99268144, -0.12076055, 0, 0.12076055, 0.99268144, 0, 0.030673146, -0.25214103)
@@ -79,58 +58,23 @@ collide_with_bodies = false
 [node name="ChestSlot" type="Marker3D" parent="." unique_id=1530505627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21247387, -0.21628709)
 
-[node name="SlotVisual" type="MeshInstance3D" parent="ChestSlot" unique_id=2071707127]
-layers = 2
-mesh = SubResource("BoxMesh_8448c")
-
-[node name="SlotSelect1" type="Area3D" parent="ChestSlot" unique_id=715880037 groups=["PlayerSlot"]]
-collision_layer = 32768
-collision_mask = 32768
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ChestSlot/SlotSelect1" unique_id=667359634]
-shape = SubResource("BoxShape3D_gielv")
+[node name="Wideslot" parent="ChestSlot" unique_id=1853633684 instance=ExtResource("4_54wtk")]
 
 [node name="BeltSlot1" type="Marker3D" parent="." unique_id=1121966867]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3887012, 0, -0.0839054)
 
-[node name="SlotVisual" type="MeshInstance3D" parent="BeltSlot1" unique_id=1386861802]
-layers = 2
-mesh = SubResource("SphereMesh_gielv")
+[node name="Beltslot" parent="BeltSlot1" unique_id=1739475639 instance=ExtResource("5_qcx1q")]
 
-[node name="SlotSelect2" type="Area3D" parent="BeltSlot1" unique_id=1696237258 groups=["PlayerSlot"]]
-collision_layer = 32768
-collision_mask = 32768
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BeltSlot1/SlotSelect2" unique_id=448386650]
-shape = SubResource("SphereShape3D_8448c")
+[node name="SpearGround" parent="BeltSlot1/Beltslot" unique_id=125347319 instance=ExtResource("6_qcx1q")]
 
 [node name="BeltSlot2" type="Marker3D" parent="." unique_id=690048966]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2996105, 0, -0.205296)
 
-[node name="JumpSpear" parent="BeltSlot2" unique_id=590310488 instance=ExtResource("3_8448c")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.43804887, 0)
-
-[node name="SlotVisual" type="MeshInstance3D" parent="BeltSlot2" unique_id=529385991]
-layers = 2
-mesh = SubResource("SphereMesh_gielv")
-
-[node name="SlotSelect3" type="Area3D" parent="BeltSlot2" unique_id=2082744689 groups=["PlayerSlot"]]
-collision_layer = 32768
-collision_mask = 32768
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BeltSlot2/SlotSelect3" unique_id=494784306]
-shape = SubResource("SphereShape3D_8448c")
+[node name="Beltslot" parent="BeltSlot2" unique_id=1936017878 instance=ExtResource("5_qcx1q")]
 
 [node name="BeltSlot3" type="Marker3D" parent="." unique_id=534972174]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17432977, 0, -0.29132095)
 
-[node name="SlotVisual" type="MeshInstance3D" parent="BeltSlot3" unique_id=2099833265]
-layers = 2
-mesh = SubResource("SphereMesh_gielv")
+[node name="Beltslot" parent="BeltSlot3" unique_id=2010784402 instance=ExtResource("5_qcx1q")]
 
-[node name="SlotSelect4" type="Area3D" parent="BeltSlot3" unique_id=334425223 groups=["PlayerSlot"]]
-collision_layer = 32768
-collision_mask = 32768
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BeltSlot3/SlotSelect4" unique_id=581629068]
-shape = SubResource("SphereShape3D_8448c")
+[editable path="CamPivot/NeckPivot/Camera3D/HandPosR/Hand"]

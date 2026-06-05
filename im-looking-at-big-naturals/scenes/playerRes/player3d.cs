@@ -15,6 +15,16 @@ public partial class player3d : CharacterBody3D
 	private const float Friction = 35.0f;
 	private const float FreelookReturnSpeed = 16.0f;
 	private const float JumpBufferTime = 0.1f; // How long (seconds) a jump press is remembered before the player lands.
+	// Camera inertia
+	private const float CamPosStiffness    = 100f;
+	private const float CamPosDamping      = 22f;
+	private const float CamRotStiffness    = 100f;
+	private const float CamRotDamping      = 16f;
+	private const float LandingBobStrength = 2f; // Scaled by fall speed (units/s). Tune if bobs feel too strong.
+	private const float JumpKickStrength   = 0.3f;  // Fixed downward offset impulse on jump.
+	private const float MaxBobOffset       = 0.5f;   // Position clamp (metres) — safety net for extreme falls.
+	private const float LateralLeanDeg     = 0.5f;   // Max camera roll from strafing (degrees).
+	private const float ForwardTiltDeg     = 0.5f;   // Max camera pitch from forward/back movement (degrees).
 	private Marker3D _twistPivot;
     private Marker3D _pitchPivot;
 	private RayCast3D _camPicker;
@@ -24,6 +34,16 @@ public partial class player3d : CharacterBody3D
 	private bool _unfree = false;
 	private bool _jumpBuffered = false;
 	private float _jumpBufferTimer = 0f;
+	// Camera inertia state
+	private Camera3D _camera;
+	private Vector3 _camRestPos = Vector3.Zero;
+	private Vector3 _camRestRot = Vector3.Zero;
+	private Vector3 _camPosOffset = Vector3.Zero;
+	private Vector3 _camPosSpringVel = Vector3.Zero;
+	private Vector3 _camRotOffset = Vector3.Zero;
+	private Vector3 _camRotSpringVel = Vector3.Zero;
+	private bool _wasOnFloor = false;
+	private Vector3 _prevVelocity = Vector3.Zero;
 
 	public override void _Ready()
     {
@@ -31,6 +51,11 @@ public partial class player3d : CharacterBody3D
         _twistPivot = GetNode<Marker3D>("CamPivot");
         _pitchPivot = GetNode<Marker3D>("CamPivot/NeckPivot");
 		_camPicker = GetNode<RayCast3D>("CamPivot/NeckPivot/RayCast3D");
+		_camera = GetNode<Camera3D>("CamPivot/NeckPivot/Camera3D");
+		// Store the camera's rest transform so inertia offsets are always additive,
+		// not destructive — the scene's existing tilt/position is preserved.
+		_camRestPos = _camera.Position;
+		_camRestRot = _camera.Rotation;
 
         // Lock and hide the cursor inside the window bounds
         Input.MouseMode = Input.MouseModeEnum.Captured;
@@ -97,6 +122,12 @@ public partial class player3d : CharacterBody3D
 			if (Mathf.Abs(twistRot.Y) < 0.001f){twistRot.Y = 0f;}
       		_twistPivot.Rotation = twistRot;
    		}
+
+		// MoveAndSlide has run — IsOnFloor() is current for this frame.
+		bool justLanded = !_wasOnFloor && IsOnFloor();
+		UpdateCameraInertia((float)delta, jumped, justLanded);
+		_prevVelocity = Velocity; // save post-slide velocity; used next frame as impact-speed proxy
+		_wasOnFloor = IsOnFloor();
 	}
 
 	public override void _UnhandledInput(InputEvent @event)
@@ -202,6 +233,66 @@ public partial class player3d : CharacterBody3D
 
 		velocity.X += accelSpeed * wishDir.X;
 		velocity.Z += accelSpeed * wishDir.Z;
+	}
+
+	/// <summary>
+	/// Procedural camera inertia. Runs every physics frame, always after MoveAndSlide.
+	///
+	/// Three independent spring-damper channels:
+	///   Z roll  — camera banks into the current strafe direction (target-driven spring).
+	///   X pitch — camera tilts with forward/back momentum (target-driven spring).
+	///   Y pos   — camera bobs on landing and on jump takeoff (impulse-driven spring).
+	///
+	/// All offsets are added on top of _camRestRot/_camRestPos, which hold the camera's
+	/// original scene transform, so the scene's built-in tilt and position are preserved.
+	/// </summary>
+	private void UpdateCameraInertia(float delta, bool jumped, bool justLanded)
+	{
+		// Project world-space horizontal velocity into character-local space.
+		// Dividing by (Speed + RunSpeed) normalises to [0..1] at max sprint so the
+		// lean/tilt constants are expressed as "degrees at full run speed".
+		Vector3 localVel = Transform.Basis.Inverse() * new Vector3(Velocity.X, 0f, Velocity.Z);
+		float maxSpeed = Speed + RunSpeed;
+
+		// ── Lateral lean (Z roll): camera banks into the direction of the strafe ──
+		// Moving right (+local X) → negative Z rotation → right side of frame tilts down.
+		float targetRoll = Mathf.DegToRad(-localVel.X * (LateralLeanDeg / maxSpeed));
+		targetRoll = Mathf.Clamp(targetRoll, Mathf.DegToRad(-LateralLeanDeg), Mathf.DegToRad(LateralLeanDeg));
+		_camRotSpringVel.Z += (targetRoll - _camRotOffset.Z) * CamRotStiffness * delta;
+		_camRotSpringVel.Z -= _camRotSpringVel.Z * CamRotDamping * delta;
+		_camRotOffset.Z += _camRotSpringVel.Z * delta;
+
+		// ── Forward tilt (X pitch): camera pitches slightly with forward/back speed ──
+		// Forward is -Z in Godot, so localVel.Z < 0 when moving forward.
+		// Negating gives positive pitch (nose down), which reads as a forward lean.
+		float targetPitch = Mathf.DegToRad(-localVel.Z * (ForwardTiltDeg / maxSpeed));
+		targetPitch = Mathf.Clamp(targetPitch, Mathf.DegToRad(-ForwardTiltDeg), Mathf.DegToRad(ForwardTiltDeg));
+		_camRotSpringVel.X += (targetPitch - _camRotOffset.X) * CamRotStiffness * delta;
+		_camRotSpringVel.X -= _camRotSpringVel.X * CamRotDamping * delta;
+		_camRotOffset.X += _camRotSpringVel.X * delta;
+
+		// ── Vertical bob (Y position): impulse-driven spring ─────────────────────
+		// Both impulses push the offset downward. The spring then pulls it back to zero,
+		// producing the characteristic bob-down-then-return feel.
+		if (justLanded)
+		{
+			// _prevVelocity.Y is the downward speed accumulated by gravity last frame —
+			// a good proxy for impact force without needing a separate collision callback.
+			_camPosSpringVel.Y -= Mathf.Abs(_prevVelocity.Y) * LandingBobStrength;
+		}
+		if (jumped)
+		{
+			// Camera lags behind the sudden upward launch — offset is pushed downward.
+			_camPosSpringVel.Y -= JumpKickStrength;
+		}
+		_camPosSpringVel.Y -= _camPosOffset.Y * CamPosStiffness * delta; // spring toward zero
+		_camPosSpringVel.Y -= _camPosSpringVel.Y * CamPosDamping * delta; // velocity damping
+		_camPosOffset.Y += _camPosSpringVel.Y * delta;
+		_camPosOffset.Y = Mathf.Clamp(_camPosOffset.Y, -MaxBobOffset, MaxBobOffset);
+
+		// Apply both offsets additively on top of the camera's original rest transform.
+		_camera.Position = _camRestPos + new Vector3(0f, _camPosOffset.Y, 0f);
+		_camera.Rotation = _camRestRot + new Vector3(_camRotOffset.X, 0f, _camRotOffset.Z);
 	}
 
 	private void GetPickerSlot(){

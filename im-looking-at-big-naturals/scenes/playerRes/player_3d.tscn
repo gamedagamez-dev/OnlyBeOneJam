@@ -3,13 +3,11 @@
 [ext_resource type="Script" uid="uid://ct5eymwefbrb3" path="res://scenes/playerRes/player3d.cs" id="1_52vux"]
 [ext_resource type="PackedScene" uid="uid://b0u0yy2x1mu6x" path="res://scenes/playerRes/playerUi.tscn" id="2_gielv"]
 [ext_resource type="PackedScene" uid="uid://b8l1ae25m2fu6" path="res://assets/player/Utility/JumpSpear.fbx" id="3_8448c"]
+[ext_resource type="Texture2D" uid="uid://der6pfggxhar1" path="res://assets/player/hand.png" id="3_n67ek"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_52vux"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_52vux"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_gielv"]
-size = Vector3(0.06, 0.11, 0.01)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gielv"]
 transparency = 1
@@ -55,25 +53,28 @@ transform = Transform3D(1, 0, 0, 0, 0.9926817, 0.12076058, 0, -0.12076058, 0.992
 transform = Transform3D(1, 0, 0, 0, 0.99268156, -0.12076057, 0, 0.12076057, 0.99268156, 0, 0.030673206, -0.25214112)
 fov = 90.0
 
+[node name="HandPosL" type="Marker3D" parent="CamPivot/NeckPivot/Camera3D" unique_id=809702355]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, -0.209, -0.0668143, -0.18168798)
+
+[node name="Hand" type="Sprite3D" parent="CamPivot/NeckPivot/Camera3D/HandPosL" unique_id=482225701]
+flip_h = true
+pixel_size = 0.001
+texture = ExtResource("3_n67ek")
+
+[node name="HandPosR" type="Marker3D" parent="CamPivot/NeckPivot/Camera3D" unique_id=391597121]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0.209, -0.0668143, -0.18168798)
+
+[node name="Hand" type="Sprite3D" parent="CamPivot/NeckPivot/Camera3D/HandPosR" unique_id=45288600]
+pixel_size = 0.001
+texture = ExtResource("3_n67ek")
+
 [node name="RayCast3D" type="RayCast3D" parent="CamPivot/NeckPivot" unique_id=1745168951]
-transform = Transform3D(1, 0, 0, 0, 0.9926815, -0.12076056, 0, 0.12076056, 0.9926815, 0, 0.030673206, -0.25214106)
+transform = Transform3D(1, 0, 0, 0, 0.99268144, -0.12076055, 0, 0.12076055, 0.99268144, 0, 0.030673146, -0.25214103)
 enabled = false
 target_position = Vector3(0, 0, -1)
 collision_mask = 32768
 collide_with_areas = true
 collide_with_bodies = false
-
-[node name="HandPosL" type="Marker3D" parent="CamPivot/NeckPivot" unique_id=809702355]
-transform = Transform3D(1, 0, 0, 0, 0.99268156, -0.12076057, 0, 0.12076057, 0.99268156, -0.209, -0.013711393, -0.44056797)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CamPivot/NeckPivot/HandPosL" unique_id=435014860]
-mesh = SubResource("BoxMesh_gielv")
-
-[node name="HandPosR" type="Marker3D" parent="CamPivot/NeckPivot" unique_id=391597121]
-transform = Transform3D(1, 0, 0, 0, 0.99268156, -0.12076057, 0, 0.12076057, 0.99268156, 0.209, -0.013711393, -0.44056797)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CamPivot/NeckPivot/HandPosR" unique_id=274347104]
-mesh = SubResource("BoxMesh_gielv")
 
 [node name="ChestSlot" type="Marker3D" parent="." unique_id=1530505627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21247387, -0.21628709)

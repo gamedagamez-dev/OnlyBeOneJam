@@ -21,7 +21,7 @@ public partial class PlayerHand : Node3D
 	/// <summary>The Marker3D that held items reparent themselves to.</summary>
 	public Marker3D GripMarker { get; private set; }
 	public HandState State      { get; private set; } = HandState.Empty;
-	public GrabbableBase HeldGrabbable { get; private set; }
+	public GrabbableBaseItem HeldGrabbable { get; private set; }
 	public bool IsEmpty => State == HandState.Empty;
 
 	// True while the physical grab button is held — drives WhileHeld and RequiresHeldButton release.
@@ -47,7 +47,7 @@ public partial class PlayerHand : Node3D
 	/// Empty hand: attempts to grab the supplied target.
 	/// Hand already holding something: activates it instead (press-to-use).
 	/// </summary>
-	public void OnGrabPressed(GrabbableBase target)
+	public void OnGrabPressed(GrabbableBaseItem target)
 	{
 		_grabButtonHeld = true;
 
@@ -85,7 +85,7 @@ public partial class PlayerHand : Node3D
 			Release();
 	}
 
-	private void Grab(GrabbableBase target)
+	private void Grab(GrabbableBaseItem target)
 	{
 		HeldGrabbable = target;
 		State = target.RequiresHeldButton ? HandState.GrabbingHold : HandState.HoldingItem;
@@ -94,7 +94,7 @@ public partial class PlayerHand : Node3D
 
 	private void Release()
 	{
-		GrabbableBase released = HeldGrabbable;
+		GrabbableBaseItem released = HeldGrabbable;
 		HeldGrabbable = null;
 		State = HandState.Empty;
 		released.OnDropped(this);

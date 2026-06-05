@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dh7blpg8uxo3b" path="res://scenes/playerRes/hand.tscn" id="3_n67ek"]
 [ext_resource type="PackedScene" uid="uid://bagdrjb6wxoxc" path="res://scenes/playerRes/wideslot.tscn" id="4_54wtk"]
 [ext_resource type="PackedScene" uid="uid://btcpejlwhw0ys" path="res://scenes/playerRes/beltslot.tscn" id="5_qcx1q"]
-[ext_resource type="PackedScene" uid="uid://b8p2s4l51j6wr" path="res://scenes/world/WorldItems/spear_ground.tscn" id="6_qcx1q"]
+[ext_resource type="PackedScene" uid="uid://b8p2s4l51j6wr" path="res://scenes/world/WorldItems/spearGround.tscn" id="6_qcx1q"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_52vux"]
 

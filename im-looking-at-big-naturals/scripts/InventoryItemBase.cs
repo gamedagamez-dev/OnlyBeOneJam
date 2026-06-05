@@ -15,7 +15,7 @@ using Godot;
 /// the item's CollisionShape can be disabled while slotted, or simply not present if
 /// the item will never be placed loose in the world.
 /// </summary>
-public abstract partial class InventoryItemBase : GrabbableBase
+public abstract partial class InventoryItemBase : GrabbableBaseItem
 {
 	public override bool RequiresHeldButton => false;
 

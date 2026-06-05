@@ -14,7 +14,7 @@ public partial class player3d : CharacterBody3D
 	private const float MaxRollAngle = 120.0f;
 	private const float Friction = 35.0f;
 	private const float FreelookReturnSpeed = 16.0f;
-	private const float JumpBufferTime = 0.1f; // How long (seconds) a jump press is remembered before the player lands.
+	private const float JumpBufferTime = 0.2f; // How long (seconds) a jump press is remembered before the player lands.
 	// Camera inertia
 	private const float CamPosStiffness    = 100f;
 	private const float CamPosDamping      = 22f;
@@ -23,8 +23,8 @@ public partial class player3d : CharacterBody3D
 	private const float LandingBobStrength = 2f; // Scaled by fall speed (units/s). Tune if bobs feel too strong.
 	private const float JumpKickStrength   = 0.3f;  // Fixed downward offset impulse on jump.
 	private const float MaxBobOffset       = 0.5f;   // Position clamp (metres) — safety net for extreme falls.
-	private const float LateralLeanDeg     = 0.5f;   // Max camera roll from strafing (degrees).
-	private const float ForwardTiltDeg     = 0.5f;   // Max camera pitch from forward/back movement (degrees).
+	private const float LateralLeanDeg     = 1f;   // Max camera roll from strafing (degrees).
+	private const float ForwardTiltDeg     = 1f;   // Max camera pitch from forward/back movement (degrees).
 	private Marker3D _twistPivot;
     private Marker3D _pitchPivot;
 	private RayCast3D _camPicker;
@@ -314,12 +314,12 @@ public partial class player3d : CharacterBody3D
 	}
 
 	/// <summary>
-	/// Reads the camera raycast to find the nearest GrabbableBase or BodySlot item.
+	/// Reads the camera raycast to find the nearest GrabbableBaseItem or BodySlot item.
 	/// Called on demand from input events. ForceRaycastUpdate() guarantees the result
 	/// is fresh at the exact moment the button was pressed, not from the last physics tick.
 	/// Returns null if nothing grabbable is in range or in the crosshair.
 	/// </summary>
-	private GrabbableBase GetCurrentGrabbable()
+	private GrabbableBaseItem GetCurrentGrabbable()
 	{
 		_camPicker.ForceRaycastUpdate();
 		if (!_camPicker.IsColliding()) return null;
@@ -327,7 +327,7 @@ public partial class player3d : CharacterBody3D
 		GodotObject collider = _camPicker.GetCollider();
 
 		// Direct hit on a world-placed grabbable (loose items, climbing holds, etc.)
-		if (collider is GrabbableBase grabbable) return grabbable;
+		if (collider is GrabbableBaseItem grabbable) return grabbable;
 
 		// Hit a body slot — hand over the item it contains, not the slot node itself.
 		if (collider is BodySlot slot && slot.HasItem) return slot.HeldItem;

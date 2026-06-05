@@ -10,10 +10,10 @@ using Godot;
 /// while slotted, but having a disabled one ready is fine.
 ///
 /// Minimum scene setup:
-///   MyGrabbable (MyClass : GrabbableBase)
+///   MyGrabbable (MyClass : GrabbableBaseItem)
 ///     └─ CollisionShape3D   ← required for world-placement raycast detection
 /// </summary>
-public abstract partial class GrabbableBase : Area3D
+public abstract partial class GrabbableBaseItem : Area3D
 {
 	/// <summary>
 	/// When true the hand releases this on grab button-up.

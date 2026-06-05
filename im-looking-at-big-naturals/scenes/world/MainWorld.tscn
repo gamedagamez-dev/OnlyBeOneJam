@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dcy11i3ndxfrg" path="res://assets/resources/MissingTex.png" id="1_4vlj2"]
 [ext_resource type="PackedScene" uid="uid://bop3p11s2e8hk" path="res://scenes/playerRes/player_3d.tscn" id="1_sw8ej"]
-[ext_resource type="PackedScene" uid="uid://b8p2s4l51j6wr" path="res://scenes/world/WorldItems/spear_ground.tscn" id="3_lb6jv"]
+[ext_resource type="PackedScene" uid="uid://b8p2s4l51j6wr" path="res://scenes/world/WorldItems/spearGround.tscn" id="3_lb6jv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lb6jv"]
 albedo_color = Color(0, 0.6537113, 0.14062765, 1)

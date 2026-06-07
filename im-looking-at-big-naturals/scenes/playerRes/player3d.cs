@@ -47,7 +47,9 @@ public partial class player3d : CharacterBody3D
 	// Hand system
 	private PlayerHand _leftHand;
 	private PlayerHand _rightHand;
-	private BodySlot _lastTargetedSlot; // tracks which body slot is currently highlighted
+	private BodySlot _lastTargetedSlot;
+	// Accumulated mouse movement since the last physics frame — consumed by hand inertia each tick.
+	private Vector2 _mouseDeltaAccum = Vector2.Zero;
 
 	public override void _Ready()
     {
@@ -133,12 +135,32 @@ public partial class player3d : CharacterBody3D
 
 		// MoveAndSlide has run — IsOnFloor() is current for this frame.
 		bool justLanded = !_wasOnFloor && IsOnFloor();
+		// Capture impact speed NOW — _prevVelocity still holds last frame's post-slide velocity,
+		// matching the same proxy used by UpdateCameraInertia's landing bob.
+		float impactSpeed = justLanded ? Mathf.Abs(_prevVelocity.Y) : 0f;
 		UpdateCameraInertia((float)delta, jumped, justLanded);
 		_prevVelocity = Velocity; // save post-slide velocity; used next frame as impact-speed proxy
 		_wasOnFloor = IsOnFloor();
-		// Drive hand callbacks and refresh the body-slot highlight.
-		_leftHand.Tick((float)delta);
-		_rightHand.Tick((float)delta);
+
+		// Shared inputs for hand inertia (avoid re-computing localVel twice).
+		Vector3 localVel = Transform.Basis.Inverse() * new Vector3(Velocity.X, 0f, Velocity.Z);
+		float maxSpeed = Speed + RunSpeed;
+
+		// Compute the physics-frame aim target once for both hands.
+		// Uses the automatic per-frame raycast update (no ForceRaycastUpdate needed here).
+		GrabbableBaseItem aimTarget = null;
+		if (_camPicker.IsColliding())
+		{
+			GodotObject col = _camPicker.GetCollider();
+			if (col is GrabbableBaseItem g) aimTarget = g;
+			else if (col is BodySlot s && s.HasItem) aimTarget = s.HeldItem;
+		}
+
+		// Drive hand springs and callbacks. _mouseDeltaAccum holds all mouse movement since
+		// the last physics tick (accumulated in _UnhandledInput) and resets after each tick.
+		_leftHand.Tick((float)delta, jumped, justLanded, impactSpeed, _mouseDeltaAccum, aimTarget, localVel, maxSpeed);
+		_rightHand.Tick((float)delta, jumped, justLanded, impactSpeed, _mouseDeltaAccum, aimTarget, localVel, maxSpeed);
+		_mouseDeltaAccum = Vector2.Zero;
 		UpdateSlotTargeting();
 	}
 
@@ -178,6 +200,10 @@ public partial class player3d : CharacterBody3D
                 Mathf.DegToRad(MaxPitchAngle)
             );
             _pitchPivot.Rotation = currentRotation;
+
+			// Accumulate mouse movement for hand inertia. Multiple motion events can fire
+			// between physics ticks; the sum is consumed once per physics frame then reset.
+			_mouseDeltaAccum += mouseMotion.Relative;
         }
 		
 		// handle sprint action being held 

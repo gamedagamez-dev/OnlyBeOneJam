@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dh7blpg8uxo3b" path="res://scenes/playerRes/hand.tscn" id="3_n67ek"]
 [ext_resource type="PackedScene" uid="uid://bagdrjb6wxoxc" path="res://scenes/playerRes/wideslot.tscn" id="4_54wtk"]
 [ext_resource type="PackedScene" uid="uid://btcpejlwhw0ys" path="res://scenes/playerRes/beltslot.tscn" id="5_qcx1q"]
+[ext_resource type="PackedScene" uid="uid://l4b3gdyb3581" path="res://assets/player/Utility/pouch.fbx" id="5_x84u4"]
 [ext_resource type="PackedScene" uid="uid://b8p2s4l51j6wr" path="res://scenes/world/WorldItems/spearGround.tscn" id="6_qcx1q"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_52vux"]
@@ -44,7 +45,7 @@ transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0.209, -0.0
 [node name="Hand" parent="CamPivot/NeckPivot/Camera3D/HandPosR" unique_id=693343663 instance=ExtResource("3_n67ek")]
 Side = 1
 
-[node name="Hand" parent="CamPivot/NeckPivot/Camera3D/HandPosR/Hand" index="0" unique_id=1031034887]
+[node name="Hand" parent="CamPivot/NeckPivot/Camera3D/HandPosR/Hand" index="1" unique_id=1031034887]
 flip_h = false
 
 [node name="RayCast3D" type="RayCast3D" parent="CamPivot/NeckPivot" unique_id=1745168951]
@@ -63,6 +64,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21247387, -0.21628709)
 [node name="BeltSlot1" type="Marker3D" parent="." unique_id=1121966867]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3887012, 0, -0.0839054)
 
+[node name="belt1" parent="BeltSlot1" unique_id=614485726 instance=ExtResource("5_x84u4")]
+transform = Transform3D(-1.3113416e-08, 0, 0.29999998, 0, 0.29999998, 0, -0.29999998, 0, -1.3113416e-08, 0.008603573, -0.00045496225, 0.0009062961)
+
 [node name="Beltslot" parent="BeltSlot1" unique_id=1739475639 instance=ExtResource("5_qcx1q")]
 
 [node name="SpearGround" parent="BeltSlot1/Beltslot" unique_id=125347319 instance=ExtResource("6_qcx1q")]
@@ -70,11 +74,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3887012, 0, -0.0839054)
 [node name="BeltSlot2" type="Marker3D" parent="." unique_id=690048966]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2996105, 0, -0.205296)
 
+[node name="belt2" parent="BeltSlot2" unique_id=543777816 instance=ExtResource("5_x84u4")]
+transform = Transform3D(0.212132, 0, 0.21213204, 0, 0.29999998, 0, -0.21213204, 0, 0.212132, -0.014567763, -0.00045496225, -0.0071434826)
+
 [node name="Beltslot" parent="BeltSlot2" unique_id=1936017878 instance=ExtResource("5_qcx1q")]
 
 [node name="BeltSlot3" type="Marker3D" parent="." unique_id=534972174]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17432977, 0, -0.29132095)
 
+[node name="belt3" parent="BeltSlot3" unique_id=44131612 instance=ExtResource("5_x84u4")]
+transform = Transform3D(0.29999998, 0, -8.881784e-16, 0, 0.29999998, 0, 8.881784e-16, 0, 0.29999998, -0.008453205, -0.00045496225, -0.0038151145)
+
 [node name="Beltslot" parent="BeltSlot3" unique_id=2010784402 instance=ExtResource("5_qcx1q")]
 
 [editable path="CamPivot/NeckPivot/Camera3D/HandPosR/Hand"]
+[editable path="CamPivot/NeckPivot/Camera3D/HandPosR/Hand/hand"]

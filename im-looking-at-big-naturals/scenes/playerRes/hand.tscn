@@ -1,15 +1,37 @@
 [gd_scene format=3 uid="uid://dh7blpg8uxo3b"]
 
 [ext_resource type="Script" uid="uid://dbjqs4xigifyc" path="res://scripts/PlayerHand.cs" id="1_143fp"]
+[ext_resource type="PackedScene" uid="uid://c58x1w2qhewxb" path="res://assets/player/Utility/hand.fbx" id="2_kkc2f"]
 [ext_resource type="Texture2D" uid="uid://der6pfggxhar1" path="res://assets/player/hand.png" id="2_kqfqr"]
+[ext_resource type="Texture2D" uid="uid://c4hbta35u57o0" path="res://assets/player/Utility/handbasetex.png" id="3_kkc2f"]
+[ext_resource type="Texture2D" uid="uid://ce0sya85sbnhi" path="res://assets/player/Utility/handfingerstex.png" id="4_u6ju1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u6ju1"]
+albedo_texture = ExtResource("3_kkc2f")
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nf8kw"]
+albedo_texture = ExtResource("4_u6ju1")
+texture_filter = 0
 
 [node name="Hand" type="Node3D" unique_id=988303314]
 script = ExtResource("1_143fp")
 _gripMarkerPath = NodePath("GripMarker")
 
+[node name="hand" parent="." unique_id=798007163 instance=ExtResource("2_kkc2f")]
+transform = Transform3D(-1.3113416e-09, 0, 0.03, 0, 0.03, 0, -0.03, 0, -1.3113416e-09, -0.0037388317, 0, 0)
+
+[node name="armmesh" parent="hand/Armature/Skeleton3D" parent_id_path=PackedInt32Array(798007163, 881352245) index="0" unique_id=1701315606]
+transform = Transform3D(1, 0, -4.2351647e-22, 3.5527137e-15, 1, 2.2777146e-22, 0, 2.2777146e-22, 1, -3.4506054e-05, 1.5790414e-05, 0.00012894534)
+surface_material_override/0 = SubResource("StandardMaterial3D_u6ju1")
+surface_material_override/1 = SubResource("StandardMaterial3D_nf8kw")
+
 [node name="Hand" type="Sprite3D" parent="." unique_id=1031034887]
+visible = false
 flip_h = true
 pixel_size = 0.001
 texture = ExtResource("2_kqfqr")
 
 [node name="GripMarker" type="Marker3D" parent="." unique_id=862158450]
+
+[editable path="hand"]
